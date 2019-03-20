@@ -8,10 +8,19 @@
 
 import UIKit
 
-class CustomButton: UIButton {
+class CalcButton: UIButton {
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        <#code#>
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = self.bounds.height / 5
+    }
+    
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        <#code#>
+//    }
 
 }
