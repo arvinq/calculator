@@ -34,7 +34,7 @@ class ViewController: UIViewController {
         let operationValue = operationButton.currentTitle
         
         enqueueOperand()
-        resetInitialValues() // once the first operand is enqueued, we clear operandDigits
+        resetOperandDigits() // once the first operand is enqueued, we clear operandDigits
         
         ///
         //we pop the operation first
@@ -45,18 +45,7 @@ class ViewController: UIViewController {
         }
         
         var result = ""
-        
-        if let first = operandQueue.dequeue(),
-            let second = operandQueue.dequeue() {
-            
-            if let oResult = currentArithmetic.getOperationResult(for: first, and: second) {
-                result = String(oResult)
-            } else {
-                result = "Error"
-            }
-            
-        }
-        
+        result = performOperation(currentArithmetic)
         configureDisplayLabel(with: result)
         ///
         
@@ -112,32 +101,26 @@ class ViewController: UIViewController {
         guard let currentArithmetic = operationStack.pop() else { return }
         
         enqueueOperand()
-        resetInitialValues() // once the second operand is enqueued, we clear operandDigits
+        resetOperandDigits() // once the second operand is enqueued, we clear operandDigits
         
         var result = ""
-        
-        if let first = operandQueue.dequeue(),
-           let second = operandQueue.dequeue() {
-            
-            if let oResult = currentArithmetic.getOperationResult(for: first, and: second) {
-                result = String(oResult)
-            } else {
-                result = "Error"
-            }
-            
-        }
+        result = performOperation(currentArithmetic)
         
         configureDisplayLabel(with: result)
     }
-    
+
     @IBAction func clearButtonTapped(_ clearButton: UIButton) {
-        resetInitialValues()
+        resetOperandDigits()
         configureDisplayLabel(with: "0")
         
+        resetOperationAndOperands()
+        
+    }
+    
+    func resetOperationAndOperands() {
         //clear our stack and queue
         operationStack.clear()
         operandQueue.clear()
-        
     }
     
     func enqueueOperand() {
@@ -170,7 +153,7 @@ class ViewController: UIViewController {
         // no consecutive zeroes, clear operandDigits and return zero
         if let first = operand.first as? Int,
                first == 0 {
-            resetInitialValues()
+            resetOperandDigits()
             return String(0)
         }
         
@@ -180,7 +163,27 @@ class ViewController: UIViewController {
         return combinedValue
     }
     
-    func resetInitialValues() {
+    func performOperation(_ currentArithmetic: ArithmeticOperation) -> String {
+        
+        var result = ""
+        
+        if let first = operandQueue.dequeue(),
+            let second = operandQueue.dequeue() {
+            
+            if let oResult = currentArithmetic.getOperationResult(for: first, and: second) {
+                let dNum: NSDecimalNumber = NSDecimalNumber(string: String(oResult))
+                result = dNum.stringValue
+            } else {
+                result = "Error"
+                resetOperationAndOperands()
+            }
+            
+        }
+        
+        return result
+    }
+    
+    func resetOperandDigits() {
         operandDigits.removeAll()
     }
     
