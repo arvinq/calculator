@@ -86,9 +86,19 @@ class ViewController: UIViewController {
     
     @IBAction func decimalButtonTapped(_ sender: UIButton) {
         if operandDigits.isEmpty {
-            operandDigits.append("0.")
-        } else {
+            // we append 0 and . separately, to compare . as a single entity
+            operandDigits.append("0")
             operandDigits.append(".")
+        } else {
+            
+            //check if . has already been entered
+            let isDecimalInPlace = operandDigits.contains { "\($0)" == "." }
+            
+            // if not, append
+            if !isDecimalInPlace {
+                operandDigits.append(".")
+            }
+            
         }
         
         let displayValue = composeValue(of: operandDigits)
