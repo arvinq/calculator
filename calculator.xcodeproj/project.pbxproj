@@ -70,8 +70,8 @@
 				A235128222426AD900536AB1 /* Model */,
 				A237631122406DBC00F9F77F /* AppDelegate.swift */,
 				A237631322406DBC00F9F77F /* ViewController.swift */,
-				A237631522406DBC00F9F77F /* Main.storyboard */,
 				A237631822406DBE00F9F77F /* Assets.xcassets */,
+				A237631522406DBC00F9F77F /* Main.storyboard */,
 				A237631A22406DBE00F9F77F /* LaunchScreen.storyboard */,
 				A237631D22406DBE00F9F77F /* Info.plist */,
 			);
