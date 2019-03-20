@@ -10,17 +10,28 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    //MARK:- IBOUTLETS
+    /// Calculator's display screen
     @IBOutlet weak var displayLabel: UILabel!
     
+    //MARK:- PROPERTIES
+    /// Contains all of the digits in a numeric insert. Digits can be 0-9, and a decimal point
     var operandDigits: [Any] = []
+    /// Contains the current and previous operation pressed in the calculator
     var operationStack = Stack<ArithmeticOperation>()
+    /// Contains all of the operands combined from the operandDigits array.
     var operandQueue = Queue<Double>()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
     }
 
+    //MARK:- IBACTIONS
+    /**
+     Numeric Button tapped. We add the numberValue into operandDigits and compose a new value
+     from all of the elements in the operandDigits. The composed value is then displayed on the screen.
+     */
     @IBAction func numericButtonTapped(_ numericButton: UIButton) {
         let numberValue = numericButton.tag
         
@@ -30,13 +41,18 @@ class ViewController: UIViewController {
         configureDisplayLabel(with: displayValue)
     }
     
+    /**
+     Arithmetic Operation Button tapped. We get the operation from the button's title. If there is
+     no arithmetic operation in the stack, we push the operationValue. If there is a current arithmetic operation
+     in the stack, we execute the operation on the operands and display the result. Once the operation is done
+     and the result is displayed, we enqueue the result making it the first operand and push the next operation into stack.
+     */
     @IBAction func operationButtonTapped(_ operationButton: UIButton) {
         let operationValue = operationButton.currentTitle
         
         enqueueOperand()
         resetOperandDigits() // once the first operand is enqueued, we clear operandDigits
         
-        ///
         //we pop the operation first
         guard let currentArithmetic = operationStack.pop() else {
             //if there's nothing to pop, we still push the operation triggered
@@ -47,13 +63,15 @@ class ViewController: UIViewController {
         var result = ""
         result = performOperation(currentArithmetic)
         configureDisplayLabel(with: result)
-        ///
         
         // execute the previous routine before actual arithmetic
         enqueueOperand()
         pushOperation(using: operationValue!)
     }
     
+    /**
+     Plus / Minus Button tapped. Toggle the button's sign either displaying a positive or a negative value.
+     */
     @IBAction func negateButtonTapped(_ sender: UIButton) {
         guard let displayText = displayLabel.text,
               let displayValue = Double(displayText) else { return }
@@ -64,6 +82,9 @@ class ViewController: UIViewController {
         
     }
     
+    /**
+     Percent Button tapped. Get the percent of the value displayed in the calc screen
+     */
     @IBAction func percentButtonTapped(_ sender: UIButton) {
         guard let displayText = displayLabel.text,
             let displayValue = Double(displayText) else { return }
@@ -73,9 +94,13 @@ class ViewController: UIViewController {
         configureDisplayLabel(with: String(percentDisplayValue))
     }
     
+    /**
+     Decimal Button tapped. Decimal point is added into operationDigits when certain conditions are met.
+     Subsequently, we display the new value with decimal point in calc screen upon successful decimal point insertion.
+     */
     @IBAction func decimalButtonTapped(_ sender: UIButton) {
         if operandDigits.isEmpty {
-            // we append 0 and . separately, to compare . as a single entity
+            // we append 0 and . separately, to make . as a single entity
             operandDigits.append("0")
             operandDigits.append(".")
         } else {
@@ -95,7 +120,10 @@ class ViewController: UIViewController {
     }
     
     
-    
+    /**
+     Equals Button tapped. We check the operands from the queue and get the operation from the stack.
+     Upon getting these values, then we perform the operation.
+     */
     @IBAction func equalsButtonTapped(_ equalsButton: UIButton) {
         
         guard let currentArithmetic = operationStack.pop() else { return }
@@ -109,6 +137,10 @@ class ViewController: UIViewController {
         configureDisplayLabel(with: result)
     }
 
+    /**
+     AC Button tapped. Cleards operandDigits, as well as operationStack and operandQueues.
+     Also clears calculator display showing zero value
+     */
     @IBAction func clearButtonTapped(_ clearButton: UIButton) {
         resetOperandDigits()
         configureDisplayLabel(with: "0")
@@ -117,12 +149,19 @@ class ViewController: UIViewController {
         
     }
     
+    //MARK:- HELPER METHODS
+    /**
+     Removes all the elements of operationStack and operandQueue
+     */
     func resetOperationAndOperands() {
         //clear our stack and queue
         operationStack.clear()
         operandQueue.clear()
     }
     
+    /**
+     Inserting the value from the calculator display into the operandQueue
+     */
     func enqueueOperand() {
         guard let displayText = displayLabel.text,
             let displayValue = Double(displayText) else { return }
@@ -132,6 +171,11 @@ class ViewController: UIViewController {
         operandQueue.enqueue(displayValue)
     }
     
+    /**
+     Pushing the selected ArithmeticOperation into the operationStack
+     - Parameters:
+        - operationValue: the arithmetic operation selected from the calculator
+     */
     func pushOperation(using operationValue: String) {
         //we push the operation after popping the previous one
         switch operationValue {
@@ -143,6 +187,13 @@ class ViewController: UIViewController {
         }
     }
     
+    /**
+     Combine values inside operandDigits to make a new value. Combining involves
+     making each element a string before triggering the joined function
+     - Parameters:
+        - operand: array containing operandDigit elements.
+     - Returns: the string value of the new number combined
+     */
     func composeValue(of operand: [Any]) -> String {
         
         // if operand array is empty, return zero
@@ -150,19 +201,26 @@ class ViewController: UIViewController {
             return String(0)
         }
         
-        // no consecutive zeroes, clear operandDigits and return zero
+        // no consecutive zeroes is allowed, clear operandDigits and return zero
         if let first = operand.first as? Int,
                first == 0 {
             resetOperandDigits()
             return String(0)
         }
         
-        //combine
+        // combine the elements in the operandDigits. Make each element a string and trigger joined
         let combinedValue = operand.compactMap( {"\($0)"} ).joined()
         
         return combinedValue
     }
     
+    /**
+     Calls the arithmetic operation based on the instance. Operands are dequeued, clearing the operandQueue.
+     Operation and Operand data structures are cleared if no result is returned
+     - Parameters:
+        - currentArithmetic: current arithmeticOperation instance
+     - Returns: result of type string to be displayed in calculator screen
+     */
     func performOperation(_ currentArithmetic: ArithmeticOperation) -> String {
         
         var result = ""
@@ -183,10 +241,17 @@ class ViewController: UIViewController {
         return result
     }
     
+    /**
+     Clears all the elements of operandDigits
+     */
     func resetOperandDigits() {
         operandDigits.removeAll()
     }
     
+    /**
+     Configure the display of the calculator
+     - Parameter text: string used as the current text of display
+     */
     func configureDisplayLabel(with text: String) {
         displayLabel.text = text
     }

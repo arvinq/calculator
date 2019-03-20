@@ -8,12 +8,22 @@
 
 import Foundation
 
+/**
+ Enumeration representing arithmetic operation in the calc
+ */
 enum ArithmeticOperation: String {
     case add
     case subtract
     case multiply
     case divide
     
+    /**
+     Performs arithmetic operation. Division by zero yields a nil value
+     - Parameters:
+        - first: the first operand in the operation statement
+        - second: the second operand in the operation statement
+     - Returns: An optional result
+     */
     func getOperationResult(for first: Double, and second: Double) -> Double? {
         
         switch self {
