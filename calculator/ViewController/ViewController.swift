@@ -98,9 +98,11 @@ class ViewController: UIViewController {
         
         let negatedDisplayValue = displayValue * -1
         
-        
         resetOperandDigits()
-        String(negatedDisplayValue).forEach {
+        
+        let dNum: NSDecimalNumber = NSDecimalNumber(string: String(negatedDisplayValue))
+        let newNegatedValue = dNum.stringValue
+        newNegatedValue.forEach {
             operandDigits.append($0)
         }
         
@@ -119,7 +121,10 @@ class ViewController: UIViewController {
         let percentDisplayValue = displayValue / 100
         
         resetOperandDigits()
-        String(percentDisplayValue).forEach {
+        
+        let dNum: NSDecimalNumber = NSDecimalNumber(string: String(percentDisplayValue))
+        let newPercentValue = dNum.stringValue
+        newPercentValue.forEach {
             operandDigits.append($0)
         }
         
