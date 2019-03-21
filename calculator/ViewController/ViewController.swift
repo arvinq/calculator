@@ -23,6 +23,8 @@ class ViewController: UIViewController {
     var operationStack = Stack<ArithmeticOperation>()
     /// Contains all of the operands combined from the operandDigits array.
     var operandQueue = Queue<Double>()
+    /// This indicates the last keyed input in the calc
+    var lastInputType: InputType?
     
     
     override func viewDidLoad() {
@@ -44,34 +46,47 @@ class ViewController: UIViewController {
         
         let displayValue = composeValue(of: operandDigits)
         configureDisplayLabel(with: displayValue)
+        lastInputType = InputType.operand
     }
     
     /**
-     Arithmetic Operation Button tapped. We get the operation from the button's title. If there is
-     no arithmetic operation in the stack, we push the operationValue. If there is a current arithmetic operation
-     in the stack, we execute the operation on the operands and display the result. Once the operation is done
-     and the result is displayed, we enqueue the result making it the first operand and push the next operation into stack.
+     Arithmetic Operation Button tapped. We get the operation from the button's title. We check the last keyed in input.
+     if it is operation, we pop the last operation from the stack and push the new one. If it is operand, check our
+     operation stack if there is operation, If there is no arithmetic operation in the stack, we push the operationValue.
+     If there is current arithmetic operation in the stack, we execute the operation on the operands and display the result.
+     Once the operation is done and the result is displayed, we enqueue the result making it the first operand.
      */
     @IBAction func operationButtonTapped(_ operationButton: UIButton) {
-        let operationValue = operationButton.currentTitle
+        guard let operationValue = operationButton.currentTitle,
+              let lastInputType = self.lastInputType else { return }
         
-        enqueueOperand()
-        resetOperandDigits() // once the first operand is enqueued, we clear operandDigits
-        
-        //we pop the operation first
-        guard let currentArithmetic = operationStack.pop() else {
-            //if there's nothing to pop, we still push the operation triggered
-            pushOperation(using: operationValue!)
-            return
+        if lastInputType == .operation {
+            
+            let _ = operationStack.pop()
+            pushOperation(using: operationValue)
+            
+        } else if lastInputType == .operand {
+            
+            if let _ = operationStack.peek() {
+                
+                let currentArithmetic = operationStack.pop()
+                pushOperation(using: operationValue)
+                
+                enqueueOperand()
+                resetOperandDigits()
+                configureDisplayLabel(with: performOperation(currentArithmetic!))
+                enqueueOperand()
+                
+            } else {
+                enqueueOperand()
+                resetOperandDigits()
+                pushOperation(using: operationValue)
+            }
+            
         }
         
-        var result = ""
-        result = performOperation(currentArithmetic)
-        configureDisplayLabel(with: result)
         
-        // execute the previous routine before actual arithmetic
-        enqueueOperand()
-        pushOperation(using: operationValue!)
+        self.lastInputType = InputType.operation
     }
     
     /**
@@ -83,7 +98,14 @@ class ViewController: UIViewController {
         
         let negatedDisplayValue = displayValue * -1
         
-        configureDisplayLabel(with: String(negatedDisplayValue))
+        
+        resetOperandDigits()
+        String(negatedDisplayValue).forEach {
+            operandDigits.append($0)
+        }
+        
+        let finalValue = composeValue(of: operandDigits)
+        configureDisplayLabel(with: finalValue)
         
     }
     
@@ -96,7 +118,13 @@ class ViewController: UIViewController {
         
         let percentDisplayValue = displayValue / 100
         
-        configureDisplayLabel(with: String(percentDisplayValue))
+        resetOperandDigits()
+        String(percentDisplayValue).forEach {
+            operandDigits.append($0)
+        }
+        
+        let finalValue = composeValue(of: operandDigits)
+        configureDisplayLabel(with: finalValue)
     }
     
     /**
@@ -140,6 +168,7 @@ class ViewController: UIViewController {
         result = performOperation(currentArithmetic)
         
         configureDisplayLabel(with: result)
+        
     }
 
     /**
@@ -149,6 +178,7 @@ class ViewController: UIViewController {
     @IBAction func clearButtonTapped(_ clearButton: UIButton) {
         resetOperandDigits()
         configureDisplayLabel(with: "0")
+        self.lastInputType = nil
         
         resetOperationAndOperands()
         
@@ -170,7 +200,6 @@ class ViewController: UIViewController {
     func enqueueOperand() {
         guard let displayText = displayLabel.text,
             let displayValue = Double(displayText) else { return }
-            //let displayValue = NumberFormatter().number(from: displayText)?.doubleValue else { return }
         
         // enqueue operand
         operandQueue.enqueue(displayValue)
