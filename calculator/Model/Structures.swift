@@ -101,4 +101,11 @@ struct Queue<T> {
     mutating func clear() {
         nodeArray.removeAll()
     }
+    
+    /**
+     Returns the number of elements in the queue
+     */
+    var count: Int {
+        return nodeArray.count
+    }
 }
