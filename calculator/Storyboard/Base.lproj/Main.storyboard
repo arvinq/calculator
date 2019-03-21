@@ -30,12 +30,21 @@
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Undefine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BMu-FF-UsQ">
+                                                <rect key="frame" x="189.5" y="10" width="156.5" height="48"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                         </subviews>
                                         <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="Ko7-4s-qly" secondAttribute="trailing" constant="10" id="N4J-Yg-vWl"/>
-                                            <constraint firstAttribute="bottom" secondItem="Ko7-4s-qly" secondAttribute="bottom" constant="10" id="Yzm-xQ-5WF"/>
+                                            <constraint firstItem="Ko7-4s-qly" firstAttribute="trailing" secondItem="S9a-PK-yoT" secondAttribute="trailing" constant="-10" id="N4J-Yg-vWl"/>
+                                            <constraint firstItem="Ko7-4s-qly" firstAttribute="bottom" secondItem="S9a-PK-yoT" secondAttribute="bottom" constant="-10" id="Yzm-xQ-5WF"/>
+                                            <constraint firstItem="BMu-FF-UsQ" firstAttribute="top" secondItem="S9a-PK-yoT" secondAttribute="top" constant="10" id="f71-hw-Z0j"/>
+                                            <constraint firstItem="BMu-FF-UsQ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="S9a-PK-yoT" secondAttribute="leading" id="oQ1-fX-KJt"/>
                                             <constraint firstItem="Ko7-4s-qly" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="S9a-PK-yoT" secondAttribute="leading" constant="20" symbolic="YES" id="s4N-fJ-Kfo"/>
+                                            <constraint firstItem="BMu-FF-UsQ" firstAttribute="trailing" secondItem="S9a-PK-yoT" secondAttribute="trailing" constant="-10" id="xsc-Iw-Oll"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1l7-g3-TFE" userLabel="Control View">
@@ -311,6 +320,7 @@
                     </view>
                     <connections>
                         <outlet property="displayLabel" destination="Ko7-4s-qly" id="ry8-3e-IgF"/>
+                        <outlet property="undefineLabel" destination="BMu-FF-UsQ" id="DJ1-pP-xPO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

@@ -13,6 +13,8 @@ class ViewController: UIViewController {
     //MARK:- IBOUTLETS
     /// Calculator's display screen
     @IBOutlet weak var displayLabel: UILabel!
+    /// Indicator that the operation is undefined
+    @IBOutlet weak var undefineLabel: UILabel!
     
     //MARK:- PROPERTIES
     /// Contains all of the digits in a numeric insert. Digits can be 0-9, and a decimal point
@@ -25,6 +27,9 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //hide the undefine label
+        undefineLabel.alpha = 0
     }
 
     //MARK:- IBACTIONS
@@ -253,7 +258,22 @@ class ViewController: UIViewController {
      - Parameter text: string used as the current text of display
      */
     func configureDisplayLabel(with text: String) {
-        displayLabel.text = text
+        if let _ = Double(text) { //checks whether the text is an instance of Double
+            let dNum: NSDecimalNumber = NSDecimalNumber(string: text)
+            displayLabel.text = dNum.stringValue
+        } else {
+            //if not, then we animate undefine label to display
+            UIView.animate(withDuration: 0.5, animations: {
+                self.undefineLabel.alpha = 1
+            }) { (true) in
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.undefineLabel.alpha = 0
+                })
+            }
+            
+            let dNum: NSDecimalNumber = NSDecimalNumber(string: text)
+            displayLabel.text = dNum.stringValue
+        }
     }
     
 }
